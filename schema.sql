@@ -1,4 +1,4 @@
--- – PostgreSQL schema for users table with ENUM group_type
+-- Schema for users table with ENUM group_type
 
 -- Create ENUM
 CREATE TYPE group_type AS ENUM
@@ -15,3 +15,26 @@ INSERT INTO users
 VALUES
     ('Jan', 'Kowalski', 'jan.kowalski@iaeste.pl', 'IT'),
     ('Alicja', 'Nowak', 'alicja.nowak@iaeste.pl', 'Grafika');
+
+
+-- Schema for event_manager and event tables
+
+-- Create event_manager
+CREATE TABLE event_manager (id SERIAL PRIMARY KEY);
+
+-- Add first event (create event table and update event_manager)
+INSERT INTO event_manager DEFAULT VALUES;
+
+CREATE TABLE table_1 (name TEXT NOT NULL, "13:00-13:30" INT[], "13:30-14:00" INT[]);
+
+INSERT INTO table_1
+    (name, "13:00-13:30", "13:30-14:00")
+VALUES
+    ('yes', '{}', '{}'),
+    ('maybe', '{}', '{}'),
+    ('no', '{}', '{}');
+
+-- Update table
+UPDATE table_1
+SET "13:00-13:30" = '{26}'
+WHERE name='yes';
