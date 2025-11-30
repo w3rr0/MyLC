@@ -5,9 +5,9 @@ CREATE TYPE group_type AS ENUM
     ( 'IT', 'HR', 'PR', 'IO', 'JFR', 'Grafika' );
 
 -- Create Table
-CREATE TABLE users ( id SERIAL PRIMARY KEY,
-first_name TEXT NOT NULL, last_name TEXT NOT NULL, email TEXT NOT NULL,
-“group” group_type NOT NULL );
+CREATE TABLE users
+    ( id SERIAL PRIMARY KEY, first_name TEXT NOT NULL, last_name TEXT NOT NULL,
+      email TEXT NOT NULL, “group” group_type NOT NULL );
 
 -- Example Insert
 INSERT INTO users
