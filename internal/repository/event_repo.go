@@ -93,3 +93,50 @@ func GenerateTimeSlots(start, stop time.Time) []string {
 
 	return slots
 }
+
+func IfTableExist(db *sql.DB, id int) (bool, error) {
+	tableName := fmt.Sprintf("table_%d", id)
+
+	var exist bool
+	query1 := `
+		SELECT EXISTS (
+			SELECT 1
+			FROM pg_tables
+			WHERE tablename = $1
+		)
+	`
+	err := db.QueryRow(query1, tableName).Scan(&exist)
+	if err != nil {
+		return false, err
+	}
+
+	var inManager bool
+	query2 := `
+		SELECT EXISTS (
+			SELECT 1
+			FROM event_manager
+			WHERE id = $1
+		)
+	`
+	err = db.QueryRow(query2, id).Scan(&inManager)
+	if err != nil {
+		return false, err
+	}
+
+	if exist != inManager {
+		if exist {
+			log.Println("Table exist, but no corresponding entry in event_manager")
+		}
+		if !inManager {
+			log.Println("Table doesn't exist, but entry exist in event_manager")
+		}
+	}
+
+	if !exist {
+		return false, nil
+	}
+	if !inManager {
+		return false, nil
+	}
+	return true, nil
+}
