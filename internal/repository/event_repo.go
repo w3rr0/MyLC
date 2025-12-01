@@ -43,10 +43,10 @@ func CreateEvent(db *sql.DB, start time.Time, end time.Time) error {
 	return nil
 }
 
-func DeleteEvent(db *sql.DB, event_id int) error {
-	toDelete := fmt.Sprintf("table_%d", event_id)
+func DeleteEvent(db *sql.DB, eventId int) error {
+	toDelete := fmt.Sprintf("table_%d", eventId)
 	query1 := fmt.Sprintf("DROP TABLE %q", toDelete)
-	query2 := fmt.Sprintf("DELETE FROM event_manager WHERE id = %d", event_id)
+	query2 := fmt.Sprintf("DELETE FROM event_manager WHERE id = %d", eventId)
 
 	_, err := db.Exec(query1)
 	if err != nil {
