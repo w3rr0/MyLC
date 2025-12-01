@@ -152,6 +152,27 @@ func IfTableExist(db *sql.DB, id int) (bool, error) {
 	return true, nil
 }
 
+func IfUserExists(db *sql.DB, userId int) (bool, error) {
+	var exist bool
+
+	query := `
+		SELECT EXISTS (
+			SELECT 1
+			FROM users
+			WHERE id = $1
+		)
+	`
+	err := db.QueryRow(query, userId).Scan(&exist)
+	if err != nil {
+		return false, err
+	}
+
+	if !exist {
+		return false, nil
+	}
+	return true, nil
+}
+
 func CheckTable(db *sql.DB, eventId int) error {
 	check, err := IfTableExist(db, eventId)
 	if err != nil {
