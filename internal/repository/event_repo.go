@@ -110,7 +110,7 @@ func tableFrom(eventId int) string {
 }
 
 func IfTableExist(db *sql.DB, id int) (bool, error) {
-	tableName := fmt.Sprintf("table_%d", id)
+	tableName := tableFrom(id)
 
 	var exist bool
 	query1 := `
