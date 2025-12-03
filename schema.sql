@@ -20,7 +20,7 @@ VALUES
 -- Schema for event_manager and event tables
 
 -- Create event_manager
-CREATE TABLE event_manager (id SERIAL PRIMARY KEY);
+CREATE TABLE event_manager (id SERIAL PRIMARY KEY, name TEXT NOT NULL DEFAULT 'Untitled Event');
 
 -- Add first event (create event table and update event_manager)
 INSERT INTO event_manager DEFAULT VALUES;
