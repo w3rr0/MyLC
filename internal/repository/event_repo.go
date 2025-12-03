@@ -4,12 +4,13 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"go_server/internal/models"
 	"log"
 	"strings"
 	"time"
 )
 
-func CreateEvent(db *sql.DB, start time.Time, end time.Time) error {
+func CreateEvent(db *sql.DB, start time.Time, end time.Time, eventName string) error {
 	if end.Before(start.Add(15 * time.Minute)) {
 		return fmt.Errorf("end time must be greater than start time")
 	}
@@ -17,8 +18,7 @@ func CreateEvent(db *sql.DB, start time.Time, end time.Time) error {
 	var newId int
 
 	err := db.QueryRow(
-		`INSERT INTO event_manager DEFAULT VALUES RETURNING id`,
-	).Scan(&newId)
+		`INSERT INTO event_manager (name) VALUES ($1) RETURNING id`, eventName).Scan(&newId)
 	if err != nil {
 		return err
 	}
