@@ -17,6 +17,7 @@ func main() {
 	mux.HandleFunc("/create_event", handlers.HandleCreateEvent)
 	mux.HandleFunc("/delete_event", handlers.HandleDeleteEvent)
 	mux.HandleFunc("/change_availability", handlers.HandleChangeAvailability)
+	mux.HandleFunc("/get_all_current_events", handlers.HandleGetAllCurrentEvents)
 
 	log.Println("Server is running at :8080")
 	err := http.ListenAndServe(":8080", mux)
