@@ -96,6 +96,76 @@ func ChangeAvailability(db *sql.DB, eventId int, userId int, availability map[st
 	return nil
 }
 
+func GetAllCurrentEvents(db *sql.DB, userId int) ([]models.EventSummary, error) {
+	var eventsList []models.EventSummary
+
+	getEventFromManagerQuery := `
+		SELECT id, name
+		FROM event_manager`
+
+	maxFilledQuery := `
+		SELECT COUNT(*)
+		FROM information_schema.columns
+		WHERE table_name = $1`
+
+	rows, err := db.Query(getEventFromManagerQuery)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var event models.EventSummary
+		if err := rows.Scan(&event.ID, &event.Name); err != nil {
+			return nil, err
+		}
+		tableName := tableFrom(event.ID)
+		tableColumns, err := GetTableColumns(db, tableName)
+		if err != nil {
+			return nil, err
+		}
+
+		var timeSlots []string
+		for _, col := range tableColumns {
+			if col != "name" {
+				timeSlots = append(timeSlots, col)
+			}
+		}
+
+		var parts []string
+		for _, slot := range timeSlots {
+			parts = append(parts, fmt.Sprintf("SELECT unnest(%q) AS val FROM %q", slot, tableName))
+		}
+
+		queryBody := strings.Join(parts, " UNION ALL ")
+
+		query := fmt.Sprintf(`
+			SELECT COUNT(*)
+			FROM (%s) AS combined
+			WHERE val = $1
+			`, queryBody)
+
+		var filledCount int
+		err = db.QueryRow(query, userId).Scan(&filledCount)
+		if err != nil {
+			return nil, err
+		}
+
+		var maxFilled int
+		err = db.QueryRow(maxFilledQuery, tableName).Scan(&maxFilled)
+		if err != nil {
+			return nil, err
+		}
+
+		filled := filledCount == maxFilled
+		event.Filled = filled
+
+		eventsList = append(eventsList, event)
+	}
+
+	return eventsList, nil
+}
+
 func CreateColumnsFromTime(start time.Time, end time.Time) []string {
 	roundedStart := RoundToHalfHour(start)
 	roundedEnd := RoundToHalfHour(end)
