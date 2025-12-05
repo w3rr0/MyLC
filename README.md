@@ -1,125 +1,87 @@
 # MyLC for IAESTE
 
-My Local Committee to aplikacja, która ułatwia organizację stanowisk oraz innych eventów,
-poprzez uproszczenie systemu zapisów przez członków i organizatorów.
-Automatycznie tworzy konta członków na bazie maila `@iaeste.pl`,
-śledzi zgłoszenia obecności, a co najważniejsze jest kompatybilna z
-urządzeniami mobilnymi jak i stacjonarnymi
+My Local Committee is a comprehensive application
+designed to streamline the organization of stands and other events
+by simplifying the signup process for members and organizers.
+The system automates account creation based on @iaeste.pl email addresses
+and tracks attendance efficiently.
+Most importantly, the application is fully responsive,
+ensuring full compatibility with both mobile and desktop devices.
 
-Poniższa instrukcja służy pomocy w konfiguracji środowiska,
-przygotowaniu bazy danych oraz uruchomieniu aplikacji lokalnie.
-Jeśli chcesz na jej bazie zbudować kompletny system dla swojego komitetu,
-do czego gorąco zachęcam, poniżej znajdują się przydatne materiały.
+This guide provides instructions on how to set up the environment
+and run the application locally using Docker.
+If you wish to build a complete system for your committee
+based on this project - which I highly encourage — please find the resources below.
 
-## 📋 Wymagania wstępne
-Zanim zaczniesz, upewnij się, że masz zainstalowane następujące narzędzia:
+## 📋 Prerequisites
+Before you begin, ensure you have the following tools installed on your machine.
+Thanks to Docker, you do not need to install Go or PostgreSQL locally.
 
-- `Go`: w wersji 1.25 lub nowszej.
+- `Docker desktop`: Includes the Docker Engine and Docker Compose.
 
-- `PostgreSQL`: w wersji 17.
+- `Git`: For cloning the repository.
 
-- `Git`: do pobrania repozytorium.
+## 🚀 Getting Started
 
-## 📲 Jak zainstalować
+Follow these steps to get the application up and running.
 
-#### Linux / macOS Najłatwiej użyć menedżera pakietów
+#### 1. Clone the Repository
 
-```bash
-# macOS
-brew install go postgresql
 
-# Linux (Ubuntu/Debian)
-sudo apt update
-sudo apt install golang postgresql
-```
-
-#### Alternatywnie pobierz instalatory ze stron oficjalnych:
-[Go Download](https://go.dev/doc/install) |
-[PostgreSQL Download](https://www.postgresql.org/download/)
-
-#### Windows Pobierz i uruchom instalatory:
-
-[Go 1.25 Installer](https://go.dev/doc/install)
-
-[PostgreSQL 17 Installer](https://www.postgresql.org/download/)
-
-## 📥 Pobranie Repozytorium
-
-Zforkuj to repozytorium na swoje konto GitHub,
-a następnie sklonuj je lokalnie:
+Fork this repository to your GitHub account, then clone it locally:
 
 ```bash
-# Za pomocą ssh
-git clone git@github.com:<YOUR_NICK>/IAESTE_stands_server.git
-# Lub https
-git clone https://github.com/<YOUR_NICK>/IAESTE_stands_server.git
-```
-Gałąź główna `main` to zawsze najnowsza stabilna wersja kodu.
-Gdy wychodzi nowa wersja, zaktualizuj swoją kopię kodu za pomocą przycisku `Sync fork`
-w repo na swoim koncie.
+  # Using SSH
+  git clone git@github.com:<YOUR_NICK>/IAESTE_stands_server.git
 
-## 🗄️ Konfiguracja Bazy Danych
-
-Projekt wymaga bazy danych PostgreSQL.
-Plik ze strukturą bazy znajduje się w `schema.sql`.
-
-Upewnij się, że serwer PostgreSQL jest uruchomiony.
-
-Stwórz nową bazę danych o nazwie `test` (nazwa zostanie zmieniona,
-gdy wymyślę jak cały projekt ma się nazywać) i zaimportuj schemat.
-
-#### Linux / macOS (Terminal)
-```bash
-# 1. Stwórz bazę danych
-createdb test
-
-# 2. Zaimportuj schemat
-psql -d test -f schema.sql
+  # Or using HTTPS
+  git clone https://github.com/<YOUR_NICK>/IAESTE_stands_server.git
 ```
 
-#### Windows (PowerShell lub CMD)
-```powershell
-# 1. Stwórz bazę danych (możesz też użyć pgAdmin)
-createdb -U postgres test
+Note: The main branch always contains the latest stable version of the code.
+If a new version is released, update your local copy using the Sync fork button
+on your GitHub repository.
 
-# 2. Zaimportuj schemat
-psql -U postgres -d moj_projekt_db -f schema.sql
-```
+#### 2. Build and Run via Docker
 
-## 🚀 Uruchomienie Projektu
-
-Gdy masz już zainstalowane Go i przygotowaną bazę danych,
-wykonaj następujące kroki:
-
-1. Pobierz zależności
-
-Otwórz terminal w folderze projektu i uruchom:
+Navigate to the project directory and start the application using Docker Compose.
+This command will build the API image and pull the necessary database image.
 
 ```bash
-go mod download
+# Build containrest
+docker compose build
+# Then start with logs
+docker compose up
+# Or without (recommended unless you want to contribute to development)
+docker compose up -d
 ```
 
-2. Uruchom serwer
+- The API will be available at: http://localhost:8080
+- The Database will be exposed on port: 5432
 
-Punkt wejściowy aplikacji znajduje się w `cmd/server/main.go`.
 
-#### Linux / macOS / Windows Komenda jest identyczna dla wszystkich systemów:
+To stop the application:
 ```bash
-go run cmd/server/main.go
+docker compose down
 ```
 
-Jeśli wszystko poszło zgodnie z planem, powinieneś zobaczyć w konsoli informację,
-że serwer wystartował (Server is running at :8080).
+You do not need to manually create the database or import SQL files.
 
-## 🛠️ Rozwiązywanie problemów
+The Docker setup is configured to automatically initialize the PostgreSQL database
+using the `schema.sql` file upon the first launch.
+The database `mylc` (and user postgres) will be created and populated
+with the necessary tables automatically.
 
-- Do pomocy z setupem projektu można pisać do mnie DM
-- W przypadku znalezienia jakiegoś błędu w programie proszę o stworzenie issue
-w tym repo, najlepiej z opisem błędu oraz krokami do jego odtworzenia.
-W pierwszej kolejności jednak sprawdź, czy ktoś inny nie zgłosił już tego problemu
-oraz czy nie został on już naprawiony w najnowszej wersji kodu.
+## 🛠️ Troubleshooting
 
-## 📄 Uwaga
+- Setup Assistance: If you need help with the setup, feel free to DM me.
+- Reporting Bugs: If you find a bug, please open an Issue in this repository.
+Ideally, include a description of the error and steps to reproduce it.
+Before submitting, please check if the issue has already been reported
+or fixed in the latest version of the code.
 
-Ten projekt jest w fazie wczesnego rozwoju i może ulec znacznym zmianom.
-Jeśli zajmujesz się jego rozwojem, zalecam regularnie zaglądać do tego repo.
+## 📄 Note
+
+This project is in an early stage of development
+and is subject to significant changes. If you are involved in its development,
+I recommend checking this repository regularly for updates.
