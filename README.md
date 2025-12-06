@@ -23,9 +23,7 @@ Thanks to Docker, you do not need to install Go or PostgreSQL locally.
 
 ## 🚀 Getting Started
 
-Follow these steps to get the application up and running manually
-or execute `setup.sh` and use `docker compose up` and `docker compose down`
-to start and stop app.
+Follow these steps to get the application up and running.
 
 #### 1. Clone the Repository
 
@@ -45,6 +43,13 @@ If a new version is released, update your local copy using the Sync fork button
 on your GitHub repository.
 
 #### 2. Build and Run via Docker
+
+You can perform all steps below automatically using `setup.sh` script.
+```bash
+chmod +x setup.sh
+./setup.sh
+```
+Or follow the manual steps:
 
 Navigate to the project directory and start the application using Docker Compose.
 This command will build the API image and pull the necessary database image.

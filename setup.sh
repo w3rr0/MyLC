@@ -1,10 +1,6 @@
 #!/bin/bash
 
-# --- CONFIGURATION ---
-# Your repository URL
-REPO_URL="https://github.com/w3rr0/MyLC.git"
-# Folder name to clone into
-DIR_NAME="server"
+# === Run Server ===
 
 # --- colors ---
 GREEN='\033[0;32m'
@@ -21,18 +17,7 @@ if ! docker info > /dev/null 2>&1; then
   exit 1
 fi
 
-# 2. Clone or update the repository
-if [ -d "$DIR_NAME" ]; then
-    echo -e "${BLUE}Directory $DIR_NAME already exist.${NC}"
-    echo "Downloading changes (git pull)..."
-    cd "$DIR_NAME" || exit
-    git pull
-else
-    echo -e "${GREEN}Cloning repository...${NC}"
-    git clone "$REPO_URL" "$DIR_NAME"
-    cd "$DIR_NAME" || exit
-fi
 
-# 3. Launch Docker Compose
+# 2. Launch Docker Compose
 echo -e "${GREEN}🐳 Building and launching project inside Docker...${NC}"
 docker compose up --build
