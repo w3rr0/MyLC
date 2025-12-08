@@ -1,8 +1,13 @@
 package repository
 
 import (
+	"crypto/rand"
 	"database/sql"
+	"encoding/hex"
+	"errors"
 	"go_server/internal/models"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func GetAllUsers(db *sql.DB) ([]models.User, error) {
