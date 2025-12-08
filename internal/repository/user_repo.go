@@ -83,6 +83,36 @@ func CreateUser(db *sql.DB, email string, password string) error {
 	return nil
 }
 
+func VerifyUser(db *sql.DB, token string) error {
+	var email string
+
+	row := db.QueryRow(`
+		SELECT email
+		FROM accounts
+		WHERE verification_token = $1`, token)
+	err := row.Scan(&email)
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec(`
+		UPDATE accounts
+		SET (verification_token, is_verified)
+		VALUES ('', TRUE)
+		WHERE email = $1`, email)
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec(`
+		INSERT INTO users
+			()
+		VALUES
+		    ()`)
+
+	return nil
+}
+
 func sendVerificationEmail(to string, token string) error {
 	smtpHost := "smtp.gmail.com"
 	smtpPort := "587"
