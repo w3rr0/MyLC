@@ -9,8 +9,10 @@ import (
 
 func init() {
 	err := godotenv.Load(".env")
+	cwd, _ := os.Getwd()
 	if err != nil {
 		log.Println("No .env file found, relying on system environment variables")
+		log.Println("CWD: ", cwd)
 	}
 }
 
