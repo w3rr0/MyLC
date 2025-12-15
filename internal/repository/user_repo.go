@@ -98,8 +98,7 @@ func VerifyUser(db *sql.DB, token string) error {
 
 	_, err = db.Exec(`
 		UPDATE accounts
-		SET (verification_token, is_verified)
-		VALUES ('', TRUE)
+		SET verification_token='', is_verified=TRUE
 		WHERE email = $1`, email)
 	if err != nil {
 		return err
@@ -112,9 +111,9 @@ func VerifyUser(db *sql.DB, token string) error {
 
 	_, err = db.Exec(`
 		INSERT INTO users
-			(first_name, last_name, email)
+			(first_name, last_name, email, "group")
 		VALUES
-		    ($1, $2, $3)
+		    ($1, $2, $3, 'IT')
 	`, first, last, email)
 
 	return nil
@@ -153,10 +152,17 @@ func sendVerificationEmail(to string, token string) error {
 	smtpHost := "smtp.gmail.com"
 	smtpPort := "587"
 
-	message := fmt.Sprintf("Verification Link: http://localhost:8080/verify?token=%s", token)
+	subject := "Weryfikacja konta MyLC"
+	body := fmt.Sprintf("Kliknij w link, aby zweryfikować konto: http://localhost:8080/verify_user?token=%s", token)
+
+	msg := []byte(fmt.Sprintf("To: %s\r\n"+
+		"Subject: %s\r\n"+
+		"\r\n"+
+		"%s\r\n", to, subject, body))
+
 	auth := smtp.PlainAuth("", config.EmailUser, config.EmailPassword, smtpHost)
 
-	return smtp.SendMail(smtpHost+":"+smtpPort, auth, config.EmailUser, []string{to}, []byte(message))
+	return smtp.SendMail(smtpHost+":"+smtpPort, auth, config.EmailUser, []string{to}, msg)
 }
 
 func CheckAccount(db *sql.DB, email string) (bool, error) {
@@ -167,6 +173,7 @@ func CheckAccount(db *sql.DB, email string) (bool, error) {
 			SELECT 1
 			FROM users
 			WHERE email = $1
+		)
 	`, email).Scan(&exists)
 
 	return exists, err
