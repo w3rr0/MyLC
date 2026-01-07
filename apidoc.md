@@ -69,4 +69,13 @@
 
 #### /delete_event
 
+- Method: POST
+- Description: Delete an existing event.
+- Request Body:
+  - event_id: string (required)
+- Response:
+  - 200 OK: Event deleted successfully.
+  - 400 Bad Request: Invalid event ID.
+  - 500 Internal Server Error: Server error.
+
 #### /change_availability
